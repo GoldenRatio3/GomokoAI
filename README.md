@@ -7,7 +7,7 @@ Based on the minimax with alpha-beta pruning algorithm.
 
 ## Getting Started
 ```
-As simple as clone onto your local machine then run GomokuReferee class in any Java IDE.
+As simple as clone onto your local machine then run the GomokuReferee class in any Java IDE.
 ```
 
 ## Algorithms
