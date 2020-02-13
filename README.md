@@ -1,6 +1,6 @@
 # Gomoko AI
 ```
-An Artifical Intelligence that plays Gomoko
+An Artificial Intelligence that plays Gomoko
 
 Based on the minimax with alpha-beta pruning algorithm.
 ```
@@ -24,7 +24,7 @@ To increase the performance of the evaluation function I have included spaces in
 
 This strategy works very well but during some board states it can run inefficiently by looking at positions that humans can see are not worth it. To counteract this I created an array holding the empty positions near previously placed pieces, because this is most likely to be a highly valuable combination.
 
-### Prerequistes
+### Prerequisites
 
 ```
 Java IDE e.g. Netbeans, Eclipse or IntelliJ
