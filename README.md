@@ -2,17 +2,17 @@
 ```
 An Artificial Intelligence that plays Gomoko
 
-Based on the minimax with alpha-beta pruning algorithm.
+Based on the minimax algorithm with alpha-beta pruning.
 ```
 
 ## Getting Started
 ```
-As simple as clone onto your local machine then run the GomokuReferee class in any Java IDE.
+As simple as cloning onto your local machine then run the GomokuReferee class in any Java IDE.
 ```
 
 ## Algorithms
 
-The Minimax with alpha-beta pruning algorithm allows the evaluation of a board and how good it is for the current player to get there, on the assumption the opponent plays optimally.
+The Minimax algorithm with alpha-beta pruning allows the evaluation of a board and how good it is for the current player to get there, on the assumption the opponent plays optimally.
 By using alpha-beta pruning I can make the algorithm much more efficient. Alpha-beta pruning tries to decrease the number of boards that are evaluated by the minimax algorithm, it does this by passing two values as parameters to the minimax algorithm to determine if that area of enquiry is worth continuing down.
 To increase the efficiency of the minimax algorithm I converted all the rows, columns and diagonals into strings to speed up the runtime, compared to going through the board each time to score.
 
