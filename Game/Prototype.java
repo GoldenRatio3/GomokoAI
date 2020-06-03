@@ -30,7 +30,7 @@ class Prototype extends GomokuPlayer {
 			return new Move(oppWinningMove[0], oppWinningMove[1]);
 		}
 
-		int[] move = minimax(board, me, 4, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		int[] move = minimax(board, me, 4, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
 		System.out.println("Move: " + move[0] + "," + move[1] + " with score of " + move[2]);
 		return new Move(move[0], move[1]);
 	} // end chooseMove method
@@ -151,7 +151,7 @@ class Prototype extends GomokuPlayer {
 	/**
 	 * Minimax algorithm with alpha-beta pruning
 	 */
-	int[] minimax(Color[][] board, Color me, int depth, int alpha, int beta) {
+	int[] minimax(Color[][] board, Color me, int depth, int alpha, int beta, boolean isMaxTurn) {
 		int[] bestScore = new int[3];
 		ArrayList<String> moveList;
 		Set<String> moveListSet = new HashSet<String>();
@@ -169,13 +169,13 @@ class Prototype extends GomokuPlayer {
 		if (moveList.isEmpty() || depth == 0 || hasGameCompleted(board)) {
 			return new int[] { -1, -1, evaluate(board, me) };
 		}
-		if (me == Color.WHITE) {
+		if (isMaxTurn) {
 			int[] score = new int[] { -1, -1, Integer.MIN_VALUE };
 			bestScore[2] = Integer.MIN_VALUE;
 			for (String move : moveList) {
 				// add new move to board
 				int[] newMove = getMove(move);
-				score = minimax(addMove(board, newMove, me), Color.BLACK, depth - 1, alpha, beta);
+				score = minimax(addMove(board, newMove, me), Color.BLACK, depth - 1, alpha, beta, false);
 				if (score[2] > bestScore[2]) {
 					bestScore[0] = newMove[0];
 					bestScore[1] = newMove[1];
@@ -194,7 +194,7 @@ class Prototype extends GomokuPlayer {
 			for (String move : moveList) {
 				// add new move to board
 				int[] newMove = getMove(move);
-				score = minimax(addMove(board, newMove, me), Color.WHITE, depth - 1, alpha, beta);
+				score = minimax(addMove(board, newMove, me), Color.WHITE, depth - 1, alpha, beta, true);
 				if (score[2] < bestScore[2]) {
 					bestScore[0] = newMove[0];
 					bestScore[1] = newMove[1];
