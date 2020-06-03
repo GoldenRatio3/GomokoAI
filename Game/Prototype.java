@@ -88,43 +88,39 @@ class Prototype extends GomokuPlayer {
 	 * Heuristic evaluation method based off how many spaces the agent is to winning
 	 */
 	int evaluate(Color[][] board, Color me) {
+		System.out.println("I am " + (me.equals(Color.BLACK) ? "Black" : "White"));
+		printBoard(board);
 		int won = nearWins(board, me, 0, false) * 10000;
 		int oneAway = nearWins(board, me, 1, false) * 100;
 		int twoAway = nearWins(board, me, 2, false) * 50;
 		int threeAway = nearWins(board, me, 3, false) * 1;
 
-		if (won != 0) {
-			/*
-			 * System.out.println("----------  Turn Start ---------------");
-			 * printBoard(board); System.out.println(me); System.out.println("WON ----> " +
-			 * won); System.out.println(oneAway); System.out.println(twoAway);
-			 * System.out.println(threeAway);
-			 */
-		}
+		System.out.println(won);
+		System.out.println(oneAway);
+		System.out.println(twoAway);
+		System.out.println(threeAway);
 
 		if (me == Color.WHITE) {
-			won += (nearWins(board, Color.BLACK, 0, false) * 10000);
-			oneAway += (nearWins(board, Color.BLACK, 1, false) * 100);
-			twoAway += (nearWins(board, Color.BLACK, 2, false) * 50);
-			threeAway += (nearWins(board, Color.BLACK, 3, false) * 1);
+			won -= (nearWins(board, Color.BLACK, 0, false) * 10000);
+			oneAway -= (nearWins(board, Color.BLACK, 1, false) * 100);
+			twoAway -= (nearWins(board, Color.BLACK, 2, false) * 50);
+			threeAway -= (nearWins(board, Color.BLACK, 3, false) * 1);
 
 		} else {
-			won += (nearWins(board, Color.WHITE, 0, false) * 10000);
-			oneAway += (nearWins(board, Color.WHITE, 1, false) * 100);
-			twoAway += (nearWins(board, Color.WHITE, 2, false) * 50);
-			threeAway += (nearWins(board, Color.WHITE, 3, false) * 1);
+			won -= (nearWins(board, Color.WHITE, 0, false) * 10000);
+			oneAway -= (nearWins(board, Color.WHITE, 1, false) * 100);
+			twoAway -= (nearWins(board, Color.WHITE, 2, false) * 50);
+			threeAway -= (nearWins(board, Color.WHITE, 3, false) * 1);
 		}
 
-		if (won != 0) {
-			/*
-			 * System.out.println("WON ----> " + won); System.out.println(oneAway);
-			 * System.out.println(twoAway); System.out.println(threeAway);
-			 */
-		}
+		System.out.println(won);
+		System.out.println(oneAway);
+		System.out.println(twoAway);
+		System.out.println(threeAway);
 
 		// weight the scores
 		int totalScore = won * 100000 + oneAway * 100 + twoAway * 5 + threeAway * 1;
-
+		System.out.println(totalScore);
 		return totalScore;
 	}
 
@@ -175,7 +171,8 @@ class Prototype extends GomokuPlayer {
 			for (String move : moveList) {
 				// add new move to board
 				int[] newMove = getMove(move);
-				score = minimax(addMove(board, newMove, me), Color.BLACK, depth - 1, alpha, beta, false);
+				score = minimax(addMove(board, newMove, me), (me.equals(Color.WHITE) ? Color.BLACK : Color.WHITE),
+						depth - 1, alpha, beta, false);
 				if (score[2] > bestScore[2]) {
 					bestScore[0] = newMove[0];
 					bestScore[1] = newMove[1];
@@ -194,7 +191,8 @@ class Prototype extends GomokuPlayer {
 			for (String move : moveList) {
 				// add new move to board
 				int[] newMove = getMove(move);
-				score = minimax(addMove(board, newMove, me), Color.WHITE, depth - 1, alpha, beta, true);
+				score = minimax(addMove(board, newMove, me), (me.equals(Color.WHITE) ? Color.BLACK : Color.WHITE),
+						depth - 1, alpha, beta, true);
 				if (score[2] < bestScore[2]) {
 					bestScore[0] = newMove[0];
 					bestScore[1] = newMove[1];
