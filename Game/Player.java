@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * This gomoku player uses the minimax algorithm and a heuristic evaluation
  **/
-class Prototype extends GomokuPlayer {
+class Player extends GomokuPlayer {
 
 	public Move chooseMove(Color[][] board, Color me) {
 		// Check if no moves have been played
@@ -20,16 +20,6 @@ class Prototype extends GomokuPlayer {
 			// Then play in the middle
 			return new Move(GomokuBoard.ROWS / 2 - 1, GomokuBoard.COLS / 2 - 1);
 		}
-		int[] winningMove = hasWinningMove(board, me);
-		if (winningMove[0] != -1) {
-			return new Move(winningMove[0], winningMove[1]);
-		}
-
-		int[] oppWinningMove = hasWinningMove(board, (me.equals(Color.WHITE)) ? Color.BLACK : Color.WHITE);
-		if (oppWinningMove[0] != -1) {
-			return new Move(oppWinningMove[0], oppWinningMove[1]);
-		}
-
 		int[] move = minimax(board, me, 4, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		System.out.println("Move: " + move[0] + "," + move[1] + " with score of " + move[2]);
 		return new Move(move[0], move[1]);
@@ -49,103 +39,31 @@ class Prototype extends GomokuPlayer {
 		return true;
 	}
 
-	int[] hasWinningMove(Color[][] board, Color me) {
-		int wins = nearWins(board, me, 1, true);
-		if (wins != 0) {
-			for (int row = 0; row < GomokuBoard.ROWS; row++) {
-				for (int col = 0; col < GomokuBoard.COLS; col++) {
-					if (board[row][col] == null) {
-						// Try move
-						int[] move = { row, col };
-						if (nearWins(addMove(board, move, me), me, 0, false) != 0) {
-							return new int[] { row, col };
-						}
-					}
-				}
-			}
-		}
-		return new int[] { -1, -1 };
-	}
-
-	void printBoard(Color[][] board) {
-		System.out.println("------- Start board print ---------");
-		for (int row = 0; row < GomokuBoard.ROWS; row++) {
-			for (int col = 0; col < GomokuBoard.COLS; col++) {
-				if (board[row][col] == null) {
-					System.out.print("_ ");
-				} else if (board[row][col] == Color.BLACK) {
-					System.out.print("B ");
-				} else {
-					System.out.print("W ");
-				}
-			}
-			System.out.println();
-		}
-		System.out.println("------- End board print ---------");
-	}
-
 	/**
 	 * Heuristic evaluation method based off how many spaces the agent is to winning
 	 */
 	int evaluate(Color[][] board, Color me) {
-		int won = nearWins(board, me, 0, false) * 10000;
-		int oneAway = nearWins(board, me, 1, false) * 100;
-		int twoAway = nearWins(board, me, 2, false) * 50;
-		int threeAway = nearWins(board, me, 3, false) * 1;
-
-		if (won != 0) {
-			/*
-			 * System.out.println("----------  Turn Start ---------------");
-			 * printBoard(board); System.out.println(me); System.out.println("WON ----> " +
-			 * won); System.out.println(oneAway); System.out.println(twoAway);
-			 * System.out.println(threeAway);
-			 */
-		}
+		int won = nearWins(board, me, 0);
+		int oneAway = nearWins(board, me, 1);
+		int twoAway = nearWins(board, me, 2);
+		int threeAway = nearWins(board, me, 3);
 
 		if (me == Color.WHITE) {
-			won += (nearWins(board, Color.BLACK, 0, false));
-			oneAway += (nearWins(board, Color.BLACK, 1, false));
-			twoAway += (nearWins(board, Color.BLACK, 2, false));
-			threeAway += (nearWins(board, Color.BLACK, 3, false));
+			won -= (nearWins(board, Color.BLACK, 0));
+			oneAway -= (nearWins(board, Color.BLACK, 1));
+			twoAway -= (nearWins(board, Color.BLACK, 2));
+			threeAway -= (nearWins(board, Color.BLACK, 3));
 
 		} else {
-			won += (nearWins(board, Color.WHITE, 0, false));
-			oneAway += (nearWins(board, Color.WHITE, 1, false));
-			twoAway += (nearWins(board, Color.WHITE, 2, false));
-			threeAway += (nearWins(board, Color.WHITE, 3, false));
-		}
-
-		if (won != 0) {
-			/*
-			 * System.out.println("WON ----> " + won); System.out.println(oneAway);
-			 * System.out.println(twoAway); System.out.println(threeAway);
-			 */
+			won -= (nearWins(board, Color.WHITE, 0));
+			oneAway -= (nearWins(board, Color.WHITE, 1));
+			twoAway -= (nearWins(board, Color.WHITE, 2));
+			threeAway -= (nearWins(board, Color.WHITE, 3));
 		}
 
 		// weight the scores
 		int totalScore = won * 100000 + oneAway * 100 + twoAway * 5 + threeAway * 1;
-
 		return totalScore;
-	}
-
-	Color whosTurn(Color[][] board) {
-		int whiteMoves = 0, blackMoves = 0;
-
-		for (int row = 0; row < GomokuBoard.ROWS; row++) {
-			for (int col = 0; col < GomokuBoard.COLS; col++) {
-				if (board[row][col] == Color.WHITE) {
-					whiteMoves++;
-				} else if (board[row][col] == Color.BLACK) {
-					blackMoves++;
-				}
-
-			}
-		}
-
-		if (whiteMoves < blackMoves) {
-			return Color.WHITE;
-		}
-		return Color.BLACK;
 	}
 
 	/**
@@ -165,8 +83,8 @@ class Prototype extends GomokuPlayer {
 			moveList = new ArrayList<String>(getEmpties(board));
 		else
 			moveList = new ArrayList<String>(moveListSet);
-		// reach required depth or game finished
-		if (moveList.isEmpty() || depth == 0 || hasGameCompleted(board)) {
+		// reach required depth
+		if (moveList.isEmpty() || depth == 0) {
 			return new int[] { -1, -1, evaluate(board, me) };
 		}
 		if (me == Color.WHITE) {
@@ -207,20 +125,6 @@ class Prototype extends GomokuPlayer {
 			}
 			return new int[] { bestScore[0], bestScore[1], bestScore[2] };
 		}
-	}
-
-	boolean hasGameCompleted(Color[][] board) {
-		int whiteWins = nearWins(board, Color.WHITE, 0, false);
-		int blackWins = nearWins(board, Color.BLACK, 0, false);
-
-		boolean outcome = true;
-		if (whiteWins == 0 && blackWins == 0) {
-			outcome = false;
-		}
-		if (outcome) {
-			// printBoard(board);
-		}
-		return outcome;
 	}
 
 	/**
@@ -280,23 +184,16 @@ class Prototype extends GomokuPlayer {
 	 * @param away  how many pieces they are away
 	 * @return how many times this occurs
 	 */
-	int nearWins(Color[][] board, Color me, int away, boolean debug) {
+	int nearWins(Color[][] board, Color me, int away) {
 		int counter = 0;
 		// find possible strings by rows
 		for (int row = 0; row < GomokuBoard.ROWS; row++) {
 			String currentRow = getRow(board, row);
-
-			if (debug && away == 0) {
-				System.out.println("currentRow: " + currentRow);
-			}
 			// sliding window through row
 			for (int i = 0; i < 4; i++) {
 				int endIndex = i + 5;
 				String possibleString = currentRow.substring(i, endIndex);
 				if (isValid(possibleString, away) && isValid(possibleString, 5 - away, me)) {
-					if (debug) {
-						System.out.print("Valid with away of " + away + " and colour of ");
-					}
 					counter++;
 				}
 			}
@@ -316,10 +213,7 @@ class Prototype extends GomokuPlayer {
 
 		// find possible strings by diagonals
 
-		// top half of diags, increasing direction
-		// 4,0 -> 0,4
-		// through to
-		// 0,7 -> 0,7
+		// top half of diags
 		for (int k = 4; k < GomokuBoard.COLS; k++) {
 			String currentDiagsTop = getDiagsTop(board, k);
 			// sliding window through top diag
@@ -331,7 +225,7 @@ class Prototype extends GomokuPlayer {
 				}
 			}
 		}
-		// bottom half of diags, increasing direction
+		// bottom half of diags
 		for (int k = GomokuBoard.COLS - 2; k >= 4; k--) {
 			String currentDiagsBottom = getDiagsBottom(board, k);
 			// sliding window through top diag
@@ -343,34 +237,6 @@ class Prototype extends GomokuPlayer {
 				}
 			}
 		}
-
-		// top half of diags, decreasing direction
-		for (int k = GomokuBoard.COLS - 1; k >= 4; k--) {
-			String currentDiagsDecreasingTop = getDiagsIncreasingTop(board, k);
-			// sliding window through top diag
-			for (int i = 0; i < (currentDiagsDecreasingTop.length() - 4); i++) {
-				int endIndex = i + 5;
-				String possibleString = currentDiagsDecreasingTop.substring(i, endIndex);
-				if (isValid(possibleString, away) && isValid(possibleString, 5 - away, me)) {
-					counter++;
-				}
-			}
-		}
-
-		// bottom half of diags, decreasing direction
-		for (int k = 5; k < GomokuBoard.COLS; k++) {
-			String currentDiagsDecreasingBottom = getDiagsIncreasingBottom(board, k);
-
-			// sliding window through top diag
-			for (int i = 0; i < (currentDiagsDecreasingBottom.length() - 4); i++) {
-				int endIndex = i + 5;
-				String possibleString = currentDiagsDecreasingBottom.substring(i, endIndex);
-				if (isValid(possibleString, away) && isValid(possibleString, 5 - away, me)) {
-					counter++;
-				}
-			}
-		}
-
 		return counter;
 	}
 
@@ -400,42 +266,6 @@ class Prototype extends GomokuPlayer {
 				diags += "b";
 			else if (board[GomokuBoard.COLS - j - 1][GomokuBoard.COLS - i - 1] == Color.WHITE)
 				diags += "w";
-		}
-		return diags;
-	}
-
-	// get increasing top diagonal and turn into parsable string
-	String getDiagsIncreasingTop(Color[][] board, int diagPos) {
-		String diags = "";
-		int i = GomokuBoard.COLS - diagPos - 1;
-
-		for (int j = 0; j <= diagPos; j++) {
-			if (board[j][i] == null)
-				diags += "_";
-			else if (board[j][i] == Color.BLACK)
-				diags += "b";
-			else if (board[j][i] == Color.WHITE)
-				diags += "w";
-
-			i++;
-		}
-		return diags;
-	}
-
-	// get increasing bottom diagonal and turn into parsable string
-	String getDiagsIncreasingBottom(Color[][] board, int diagPos) {
-		String diags = "";
-		int i = GomokuBoard.COLS - diagPos;
-
-		for (int j = 0; j < diagPos; j++) {
-			if (board[i][j] == null)
-				diags += "_";
-			else if (board[i][j] == Color.BLACK)
-				diags += "b";
-			else if (board[i][j] == Color.WHITE)
-				diags += "w";
-
-			i++;
 		}
 		return diags;
 	}

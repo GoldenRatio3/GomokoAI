@@ -1,3 +1,8 @@
+
+/**
+ * Author: Bradley Winter
+ */
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,10 +15,29 @@ import java.util.HashMap;
 class Prototype extends GomokuPlayer {
 
 	public Move chooseMove(Color[][] board, Color me) {
+		// Check if no moves have been played
+		if (noMoves(board)) {
+			// Then play in the middle
+			return new Move(GomokuBoard.ROWS / 2 - 1, GomokuBoard.COLS / 2 - 1);
+		}
 		int[] move = minimax(board, me, 4, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		System.out.println("Move: " + move[0] + "," + move[1] + " with score of " + move[2]);
 		return new Move(move[0], move[1]);
 	} // end chooseMove method
+
+	/**
+	 * Checks to see if no moves have been played
+	 */
+	boolean noMoves(Color[][] board) {
+		for (int row = 0; row < GomokuBoard.ROWS; row++) {
+			for (int col = 0; col < GomokuBoard.COLS; col++) {
+				if (board[row][col] != null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Heuristic evaluation method based off how many spaces the agent is to winning
