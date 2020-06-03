@@ -103,16 +103,16 @@ class Prototype extends GomokuPlayer {
 		}
 
 		if (me == Color.WHITE) {
-			won += (nearWins(board, Color.BLACK, 0, false));
-			oneAway += (nearWins(board, Color.BLACK, 1, false));
-			twoAway += (nearWins(board, Color.BLACK, 2, false));
-			threeAway += (nearWins(board, Color.BLACK, 3, false));
+			won += (nearWins(board, Color.BLACK, 0, false) * 10000);
+			oneAway += (nearWins(board, Color.BLACK, 1, false) * 100);
+			twoAway += (nearWins(board, Color.BLACK, 2, false) * 50);
+			threeAway += (nearWins(board, Color.BLACK, 3, false) * 1);
 
 		} else {
-			won += (nearWins(board, Color.WHITE, 0, false));
-			oneAway += (nearWins(board, Color.WHITE, 1, false));
-			twoAway += (nearWins(board, Color.WHITE, 2, false));
-			threeAway += (nearWins(board, Color.WHITE, 3, false));
+			won += (nearWins(board, Color.WHITE, 0, false) * 10000);
+			oneAway += (nearWins(board, Color.WHITE, 1, false) * 100);
+			twoAway += (nearWins(board, Color.WHITE, 2, false) * 50);
+			threeAway += (nearWins(board, Color.WHITE, 3, false) * 1);
 		}
 
 		if (won != 0) {
