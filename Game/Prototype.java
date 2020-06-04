@@ -179,7 +179,7 @@ class Prototype extends GomokuPlayer {
 					bestScore[2] = score[2];
 				}
 
-				alpha = Math.max(alpha, bestScore[2]);
+				alpha = Math.max(alpha, score[2]);
 				if (beta <= alpha) {
 					break;
 				}
@@ -198,7 +198,7 @@ class Prototype extends GomokuPlayer {
 					bestScore[1] = newMove[1];
 					bestScore[2] = score[2];
 				}
-				beta = Math.min(beta, bestScore[2]);
+				beta = Math.min(beta, score[2]);
 				if (beta <= alpha) {
 					break;
 				}
