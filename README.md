@@ -28,8 +28,10 @@ This strategy works very well but during some board states it can run inefficien
 
 ## Improvements
 
-1. Update eval function; taking into consideration blocks and consective score, seperate eval function for three states, vertical, horizontal and diagonal
+1. Update eval function; taking into consideration blocks and consecutive score, seperate eval function for three states, vertical, horizontal and diagonal
 2. Add video of play against other agents
+3. Implement iterative deepening
+4. Implement transposition table
 
 ### Prerequisites
 
